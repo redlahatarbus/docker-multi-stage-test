@@ -1,0 +1,23 @@
+# first stage
+FROM golang:1.13-alpine3.11 AS builder
+RUN apk add git bash
+ENV GO111MODULE=on
+ENV GOPROXY=direct
+WORKDIR /app
+ADD . .
+RUN go build -i -o /bin/api main.go
+
+# middle stage
+FROM golang:1.13-alpine3.11 AS tester
+RUN apk add git bash build-base
+ENV GO111MODULE=on
+ENV GOPROXY=direct
+WORKDIR /app
+ADD . .
+ENTRYPOINT [ "./run-test.sh" ]
+
+# final stage
+FROM alpine:3.11
+COPY --from=builder /bin/api /bin/
+EXPOSE 8080
+CMD [ "/bin/api" ]

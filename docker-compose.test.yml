@@ -1,0 +1,13 @@
+version: "2.3"
+services:
+  app:
+    image: testapp-app-test
+    container_name: testapp-app-test-container
+    build:
+      context: ./src
+      dockerfile: Dockerfile.Test
+      target: tester
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./src:/app
